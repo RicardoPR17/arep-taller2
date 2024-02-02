@@ -5,16 +5,20 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.io.*;
 
 public class HttpServer {
 
+    private static APIQuery movieSearcher = new MovieAPI();
+    private static HashMap<String, String> contentType = new HashMap<>();
+
     public static void main(String[] args) throws IOException, URISyntaxException {
         ServerSocket serverSocket = null;
         try {
-            serverSocket = new ServerSocket(35000);
+            serverSocket = new ServerSocket(Integer.parseInt(env.PORT.getValue()));
         } catch (IOException e) {
-            System.err.println("Could not listen on port: 35000.");
+            System.err.println("Could not listen on port:  " + env.PORT.getValue() + ".");
             System.exit(1);
         }
 
@@ -33,15 +37,16 @@ public class HttpServer {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(
                             clientSocket.getInputStream()));
-            String inputLine, outputLine;
-
+            String inputLine;
+            String outputLine = "";
+            boolean search = false;
             boolean firstLine = true;
             String uriStr = "";
 
             while ((inputLine = in.readLine()) != null) {
                 if (firstLine) {
                     uriStr = inputLine.split(" ")[1];
-                    firstLine = false;
+                    break;
                 }
                 System.out.println("Received: " + inputLine);
                 if (!in.ready()) {
@@ -49,13 +54,21 @@ public class HttpServer {
                 }
             }
 
+            if (uriStr.contains("/movie?movie=")) {
+                search = true;
+            }
+
             URI file = new URI(uriStr);
             System.out.println("Find URI: " + file.getPath());
 
-            try {
-                outputLine = htttpClientHtml(file.getPath());
-            } catch (IOException e) {
-                outputLine = httpError();
+            if (search) {
+                getMovieData(out, file);
+            } else {
+                try {
+                    outputLine = htttpClientHtml(file.getPath());
+                } catch (IOException e) {
+                    outputLine = httpError();
+                }
             }
 
             out.println(outputLine);
@@ -85,7 +98,8 @@ public class HttpServer {
 
     }
 
-    public static String htttpClientHtml(String path) throws IOException { // Recibir path para buscar dentro de clases
+    public static String htttpClientHtml(String path) throws IOException {
+        setContentType();
         String outputLine = "HTTP/1.1 200 OK\r\n"
                 + "Content-Type:text/html\r\n"
                 + "\r\n";
@@ -99,5 +113,43 @@ public class HttpServer {
         }
 
         return outputLine;
+    }
+
+    private static void setContentType() {
+        if (contentType.isEmpty()) {
+            contentType.put("html", "Content-Type:text/html\r\n");
+            contentType.put("css", "Content-Type:text/css\r\n");
+            contentType.put("png", "Content-Type:image/jpeg\r\n");
+            contentType.put("js", "Content-Type:application/javascript\r\n");
+        }
+    }
+
+    /**
+     * This auxiliar method search the movie with the given URL and send the
+     * response to the user who request the data
+     * 
+     * @param out          The writer to send the response to the usar
+     * @param urlWithTitle The URL created with the name of the movie to search in
+     *                     the cache
+     */
+    private static void getMovieData(PrintWriter out, URI uri) {
+        // Search the movie with the API
+        String movieData = null;
+        String movieTitle = null;
+        try {
+            movieTitle = uri.getQuery().replace("movie=", "");
+            if (movieTitle == null)
+                throw new NullPointerException();
+            movieData = movieSearcher.queryMovie(movieTitle);
+        } catch (NullPointerException nullE) {
+            movieData = "";
+        }
+
+        String response = "HTTP/1.1 200 OK\r\n"
+                + "Content-Type:application/json; charset=ISO-8859-1\r\n"
+                + "\r\n"
+                + movieData;
+
+        out.println(response);
     }
 }
