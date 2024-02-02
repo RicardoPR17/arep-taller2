@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Movie Data App</title>
+    <link rel="icon" type="image/x-icon" href="favicon-32x32.png" />
+    <link rel="stylesheet" href="movie.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <h1>Welcome, please use the following form to obtain the data of a movie</h1>
+    <form action="/movie">
+      <label for="name">Movie title:</label>
+      <br />
+      <input type="text" id="title" placeholder="Type the title of the movie..." />
+      <br />
+      <input type="button" value="Submit" onclick="getMovieData()" />
+    </form>
+    <br />
+    <div id="movieData"></div>
+
+    <script src="movieRequest.js"></script>
+  </body>
+</html>
