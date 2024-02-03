@@ -100,6 +100,15 @@ public class HttpServer {
 
     }
 
+    /**
+     * 
+     * @param path         Path of the file requested
+     * @param outputStream Instance of OutputStream from a Socket to send an image
+     *                     if is requested
+     * @return String with the response for the request, including headers and
+     *         content
+     * @throws IOException If something related to the file reading goes wrong
+     */
     public static String htttpClientHtml(String path, OutputStream outputStream) throws IOException {
         File file = new File(path);
         String fileType = Files.probeContentType(file.toPath());
