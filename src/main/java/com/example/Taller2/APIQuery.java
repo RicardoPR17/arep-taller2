@@ -1,4 +1,4 @@
-package com.example.Lab2;
+package com.example.Taller2;
 
 public interface APIQuery {
     /**

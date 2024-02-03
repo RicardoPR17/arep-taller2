@@ -45,6 +45,7 @@ input[type="button"] {
 }
 
 img {
+  display: inline-flex;
   vertical-align: middle;
   text-align: center;
   margin-left: 1rem;

@@ -1,4 +1,4 @@
-package com.example.Lab2.Taller;
+package com.example.Taller2.labClases;
 
 import java.util.Collection;
 import java.util.Iterator;

@@ -1,4 +1,4 @@
-package com.example.Lab2;
+package com.example.Taller2;
 
 public enum env {
     PORT("17000"), API("http://www.omdbapi.com/?i=tt3896198&apikey=6754e60&t=");
