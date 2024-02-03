@@ -1,4 +1,4 @@
-package com.example;
+package com.example.Lab2.Taller;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -17,7 +17,7 @@ public class Generics<E> {
         // List<String> ls = new ArrayList<>();
         // List<Object> lo = ls; No se puede
 
-        String[] arrayString = {"arep", "patata"};
+        String[] arrayString = { "arep", "patata" };
         List<String> linkedlistStrings = new LinkedList<>();
 
         fromArrayToCollection(arrayString, linkedlistStrings);

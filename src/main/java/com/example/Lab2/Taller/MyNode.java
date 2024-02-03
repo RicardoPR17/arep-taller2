@@ -1,10 +1,10 @@
-package com.example;
+package com.example.Lab2.Taller;
 
 public class MyNode<E> {
     private E value;
     private MyNode<E> next;
 
-    public MyNode (E value) {
+    public MyNode(E value) {
         this.value = value;
         this.next = null;
     }
