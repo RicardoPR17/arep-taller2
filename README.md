@@ -52,7 +52,7 @@ El servicio de la API fue tomado del taller anterior, refactorizado para separar
 
 Para este proyecto se manejan una clase que es _HttpServer_, tomando de guía las clases encontradas en el directorio _labClases_ las cuales se realizaron durante la sesión de laboratorio.
 
-Se manejaron clases diferentes para el servidor ycon el fin de brindar flexibilidad para la extensión del proyecto y su posible modificación. En el servidor se cuenta con los elementos necesarios para levantar el servicio y escuchar por el puerto 17000, el cual se puede cambiar solo con modificar este valor que se encuentra en el enumerado llamado _env_.
+En el servidor se cuenta con los elementos necesarios para levantar el servicio y escuchar por el puerto 17000, el cual se puede cambiar solo con modificar este valor que se encuentra en el enumerado llamado _env_.
 
 A nivel de arquitectura, se manejaron 2 directorios. El primero y principal del proyecto que es _Taller2_ donde encontramos el código que inicia el servidor y maneja las peticiones que se realicen desde un cliente (el navegador). El segundo directorio es _resources/public_, aquí encontramos todos los recursos que el servidor ofrece y envía cuando son solicitados.
 
