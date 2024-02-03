@@ -1,17 +1,19 @@
 package com.example.Lab2;
 
 import java.net.*;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.Base64;
 import java.io.*;
 
 public class HttpServer {
 
     private static APIQuery movieSearcher = new MovieAPI();
-    private static HashMap<String, String> contentType = new HashMap<>();
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         ServerSocket serverSocket = null;
@@ -81,7 +83,7 @@ public class HttpServer {
     }
 
     private static String httpError() {
-        String outputLine = "HTTP/1.1 400 Not Found\r\n"
+        String outputLine = "HTTP/1.1 404 Not Found\r\n"
                 + "Content-Type:text/html\r\n"
                 + "\r\n"
                 + "<!DOCTYPE html>\n"
@@ -99,29 +101,39 @@ public class HttpServer {
     }
 
     public static String htttpClientHtml(String path) throws IOException {
-        setContentType();
-        String outputLine = "HTTP/1.1 200 OK\r\n"
-                + "Content-Type:text/html\r\n"
-                + "\r\n";
+        File file = new File(path);
+        String fileType = Files.probeContentType(file.toPath());
 
-        Path page = Paths.get("target/classes/public/" + path);
+        String outputLine = "";
+
+        Path filePath = Paths.get("target/classes/public/" + path);
         Charset charset = Charset.forName("UTF-8");
-        BufferedReader reader = Files.newBufferedReader(page, charset);
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            outputLine += line;
+        if (fileType.contains("image")) {
+            String imageData = fromImageToString(filePath, fileType);
+            outputLine += imageData;
+        } else {
+            outputLine = "HTTP/1.1 200 OK\r\n"
+                    + "Content-Type:" + fileType + "\r\n"
+                    + "\r\n";
+            BufferedReader reader = Files.newBufferedReader(filePath, charset);
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                outputLine += line;
+                if (!reader.ready()) {
+                    break;
+                }
+            }
         }
-
         return outputLine;
     }
 
-    private static void setContentType() {
-        if (contentType.isEmpty()) {
-            contentType.put("html", "Content-Type:text/html\r\n");
-            contentType.put("css", "Content-Type:text/css\r\n");
-            contentType.put("png", "Content-Type:image/jpeg\r\n");
-            contentType.put("js", "Content-Type:application/javascript\r\n");
-        }
+    private static String fromImageToString(Path path, String type) throws IOException {
+        byte[] bytes = Files.readAllBytes(path);
+        String base64 = Base64.getEncoder().encodeToString(bytes);
+        return "HTTP/1.1 200 OK\r\n"
+                + "Content-Type: text/" + type + "\r\n"
+                + "\r\n"
+                + "<center><img src=\"data:image/" + type + ";base64," + base64 + "\"></center>";
     }
 
     /**
