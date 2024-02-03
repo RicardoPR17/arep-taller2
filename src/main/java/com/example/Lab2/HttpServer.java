@@ -67,7 +67,7 @@ public class HttpServer {
                 getMovieData(out, file);
             } else {
                 try {
-                    outputLine = htttpClientHtml(file.getPath());
+                    outputLine = htttpClientHtml(file.getPath(), clientSocket.getOutputStream());
                 } catch (IOException e) {
                     outputLine = httpError();
                 }
@@ -100,21 +100,21 @@ public class HttpServer {
 
     }
 
-    public static String htttpClientHtml(String path) throws IOException {
+    public static String htttpClientHtml(String path, OutputStream outputStream) throws IOException {
         File file = new File(path);
         String fileType = Files.probeContentType(file.toPath());
 
-        String outputLine = "";
+        String outputLine = "HTTP/1.1 200 OK\r\n"
+                + "Content-Type:" + fileType + "\r\n"
+                + "\r\n";
 
         Path filePath = Paths.get("target/classes/public/" + path);
         Charset charset = Charset.forName("UTF-8");
         if (fileType.contains("image")) {
-            String imageData = fromImageToString(filePath, fileType);
-            outputLine += imageData;
+            byte[] bytes = Files.readAllBytes(filePath);
+            outputStream.write(outputLine.getBytes());
+            outputStream.write(bytes);
         } else {
-            outputLine = "HTTP/1.1 200 OK\r\n"
-                    + "Content-Type:" + fileType + "\r\n"
-                    + "\r\n";
             BufferedReader reader = Files.newBufferedReader(filePath, charset);
             String line = null;
             while ((line = reader.readLine()) != null) {
@@ -125,15 +125,6 @@ public class HttpServer {
             }
         }
         return outputLine;
-    }
-
-    private static String fromImageToString(Path path, String type) throws IOException {
-        byte[] bytes = Files.readAllBytes(path);
-        String base64 = Base64.getEncoder().encodeToString(bytes);
-        return "HTTP/1.1 200 OK\r\n"
-                + "Content-Type: text/" + type + "\r\n"
-                + "\r\n"
-                + "<center><img src=\"data:image/" + type + ";base64," + base64 + "\"></center>";
     }
 
     /**
