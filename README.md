@@ -1,8 +1,7 @@
 # **Taller 2 - Diseño y estructuras de aplicaciones distribuidas en internet**
 ### *Hecho por Ricardo Pulido Renteria*
 
-En este taller, se extiende el servidor web creado en el taller anterior utilizando Java y archivos almacenados en el disco.
-El usuario, puede solicitar estos recursos y el servidor realizará todo el envío del recurso solicitado. Los tipos de archivos que se manejaron fueron html, css, js, png, jpg y gif.
+Siguiendo con el proceso del taller anterior, el servidor web creado con Java y añadiendo archivos almacenados en el disco. Ahora esta habilitado para que el usuario pueda solicitar estos recursos y el servidor realizará todo el proceso requerido para enviar el recurso solicitado.
 
 ## **Descarga y ejecución**
 
